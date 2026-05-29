@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe Ciclo #2 — Espora Madre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #110701;
+      --bg-card:   #1c0d04;
+      --bg-card-2: #261407;
+      --border:    #3a1e0a;
+      --border-2:  #4a2a10;
+      --text:      #F5EDD9;
+      --text-2:    #c4a07a;
+      --text-muted:#7a5a3a;
+      --accent:    #c8601a;
+      --accent-l:  #e8803a;
+      --green:     #4d7a42;
+      --green-t:   #8fbc7c;
+      --yellow:    #b88828;
+      --yellow-t:  #e8c050;
+      --red-t:     #e06040;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .rpt-header {
+      background: linear-gradient(160deg, #1e0d04 0%, #130801 60%, #0e0501 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 52px 48px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+    .rpt-header::before {
+      content:'';
+      position:absolute; top:-80px; right:-80px;
+      width:400px; height:400px;
+      background: radial-gradient(circle, rgba(200,96,26,0.10), transparent 65%);
+      pointer-events:none;
+    }
+    .rpt-header::after {
+      content:'';
+      position:absolute; bottom:0; left:0; right:0;
+      height:1px;
+      background: linear-gradient(to right, transparent 0%, var(--accent) 30%, transparent 100%);
+      opacity:.4;
+    }
+    .header-row {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      margin-bottom:28px;
+    }
+    .brand-name {
+      font-family:'Cormorant Garamond', serif;
+      font-size:22px; font-weight:500; letter-spacing:.03em;
+    }
+    .brand-sub {
+      font-size:10px; color:var(--text-muted);
+      text-transform:uppercase; letter-spacing:.18em; margin-top:3px;
+    }
+    .cycle-pill {
+      background:var(--accent); color:#fff;
+      font-size:10px; font-weight:700; padding:6px 16px;
+      border-radius:2px; text-transform:uppercase; letter-spacing:.12em;
+    }
+    .rpt-title {
+      font-family:'Cormorant Garamond', serif;
+      font-size:58px; font-weight:300; line-height:1.05; margin-bottom:16px;
+    }
+    .rpt-title em { font-style:italic; color:var(--accent-l); }
+    .rpt-meta {
+      display:flex; gap:28px;
+      font-size:11px; color:var(--text-muted);
+    }
+    .rpt-meta span { display:flex; align-items:center; gap:6px; }
+    .mdot { width:4px; height:4px; background:var(--accent); border-radius:50%; }
+
+    .rpt-body { max-width:1140px; margin:0 auto; padding:56px 48px; }
+
+    section { margin-bottom:72px; }
+    .s-label {
+      font-size:10px; text-transform:uppercase; letter-spacing:.2em;
+      color:var(--accent); font-weight:600; margin-bottom:8px;
+    }
+    .s-title {
+      font-family:'Cormorant Garamond', serif;
+      font-size:38px; font-weight:400; color:var(--text); line-height:1.1; margin-bottom:6px;
+    }
+    .s-desc {
+      color:var(--text-2); font-size:13px; margin-bottom:32px; max-width:600px;
+    }
+    .divider {
+      height:1px;
+      background:linear-gradient(to right, var(--border), transparent);
+      margin-bottom:32px;
+    }
+
+    /* STAT CARDS */
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      gap:16px; margin-bottom:56px;
+    }
+    .stat-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:3px; padding:28px 24px;
+      position:relative; overflow:hidden;
+    }
+    .stat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    }
+    .stat-card.c-orange::before { background:var(--accent); }
+    .stat-card.c-green::before  { background:var(--green); }
+    .stat-card.c-yellow::before { background:var(--yellow); }
+    .stat-val {
+      font-family:'Cormorant Garamond', serif;
+      font-size:52px; font-weight:300; color:var(--text);
+      line-height:1; margin-bottom:8px;
+    }
+    .stat-val sup { font-size:20px; vertical-align:top; margin-top:8px; display:inline-block; }
+    .stat-lbl { font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-muted); }
+    .stat-delta { font-size:11px; font-weight:500; margin-top:10px; }
+    .stat-delta.up  { color:var(--green-t); }
+    .stat-delta.neu { color:var(--text-muted); }
+
+    /* DELIVERABLES */
+    .blocks-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .block-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:3px; overflow:hidden;
+    }
+    .block-hd {
+      padding:14px 20px; background:var(--bg-card-2);
+      border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .block-hd-title {
+      font-size:11px; font-weight:700;
+      text-transform:uppercase; letter-spacing:.12em; color:var(--text);
+    }
+    .badge { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; padding:3px 10px; border-radius:2px; }
+    .badge-done    { background:rgba(77,122,66,.25); color:var(--green-t); border:1px solid rgba(77,122,66,.45); }
+    .badge-partial { background:rgba(184,136,40,.2); color:var(--yellow-t); border:1px solid rgba(184,136,40,.4); }
+    .block-list { padding:12px 20px; }
+    .bl-item {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:9px 0; border-bottom:1px solid rgba(58,30,10,.6);
+    }
+    .bl-item:last-child { border-bottom:none; }
+    .bl-icon {
+      width:17px; height:17px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:9px; flex-shrink:0; margin-top:2px;
+    }
+    .i-ok   { background:rgba(77,122,66,.3);  color:var(--green-t);  border:1px solid rgba(77,122,66,.5); }
+    .i-wait { background:rgba(184,136,40,.2); color:var(--yellow-t); border:1px solid rgba(184,136,40,.4); }
+    .i-next { background:rgba(80,80,80,.2);   color:var(--text-muted); border:1px solid var(--border); }
+    .bl-txt { flex:1; }
+    .bl-main { font-size:13px; color:var(--text); }
+    .bl-note { font-size:11px; color:var(--text-muted); margin-top:2px; line-height:1.4; }
+
+    /* SEO SCORE */
+    .seo-journey {
+      display:grid; grid-template-columns:1fr 60px 1fr 60px 1fr;
+      gap:16px; align-items:center; margin-bottom:40px;
+    }
+    .score-box {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:3px; padding:32px; text-align:center;
+    }
+    .score-box.now { border-color:rgba(77,122,66,.6); background:rgba(77,122,66,.06); }
+    .score-box.est { border-color:rgba(184,136,40,.5); background:rgba(184,136,40,.05); border-style:dashed; }
+    .sc-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.15em; color:var(--text-muted); margin-bottom:12px; }
+    .sc-num { font-family:'Cormorant Garamond', serif; font-size:68px; font-weight:300; line-height:1; }
+    .score-box.before .sc-num { color:var(--red-t); }
+    .score-box.mid .sc-num    { color:var(--yellow-t); }
+    .score-box.now .sc-num    { color:var(--green-t); }
+    .score-box.est .sc-num    { color:var(--yellow-t); opacity:.9; }
+    .sc-denom { font-size:22px; color:var(--text-muted); }
+    .sc-date { font-size:10px; color:var(--text-muted); margin-top:8px; }
+    .seo-arrow { text-align:center; }
+    .arr-icon { font-size:22px; color:var(--accent); opacity:.7; }
+    .arr-val  { font-size:10px; color:var(--green-t); font-weight:600; display:block; margin-top:2px; }
+
+    /* ACHIEVEMENTS */
+    .achv-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .achv-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:3px; padding:20px;
+    }
+    .achv-ico { font-size:22px; margin-bottom:10px; }
+    .achv-title { font-size:13px; color:var(--text); font-weight:500; margin-bottom:4px; }
+    .achv-desc { font-size:11px; color:var(--text-muted); line-height:1.55; }
+    .achv-tag {
+      display:inline-block; font-size:9px; text-transform:uppercase; letter-spacing:.08em;
+      padding:2px 8px; border-radius:2px; margin-top:10px;
+      background:rgba(77,122,66,.2); color:var(--green-t); border:1px solid rgba(77,122,66,.35);
+    }
+    .achv-tag.warn {
+      background:rgba(184,136,40,.18); color:var(--yellow-t); border-color:rgba(184,136,40,.35);
+    }
+
+    /* DIGITAL PRESENCE */
+    .presence-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .pres-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:3px; padding:28px 24px; position:relative;
+    }
+    .pres-platform { font-size:10px; text-transform:uppercase; letter-spacing:.15em; color:var(--text-muted); margin-bottom:14px; }
+    .pres-val {
+      font-family:'Cormorant Garamond', serif;
+      font-size:44px; font-weight:300; line-height:1; color:var(--text); margin-bottom:4px;
+    }
+    .pres-ctx { font-size:12px; color:var(--text-2); }
+    .pres-pend { font-size:11px; color:var(--text-muted); font-style:italic; margin-top:8px; }
+    .pres-status {
+      position:absolute; top:20px; right:20px;
+      font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+      padding:3px 9px; border-radius:2px;
+    }
+    .pres-status.ok   { background:rgba(77,122,66,.2); color:var(--green-t); border:1px solid rgba(77,122,66,.4); }
+    .pres-status.pend { background:rgba(80,80,80,.2); color:var(--text-muted); border:1px solid var(--border); }
+
+    /* VISIBILITY */
+    .visibility-box {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:3px; padding:32px;
+    }
+    .vis-row { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+    .vis-block-title {
+      font-size:11px; text-transform:uppercase; letter-spacing:.12em;
+      color:var(--text-muted); font-weight:600; margin-bottom:16px;
+    }
+    .vis-item {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:10px 0; border-bottom:1px solid rgba(58,30,10,.6);
+      font-size:12px; color:var(--text-2);
+    }
+    .vis-item:last-child { border-bottom:none; }
+    .vis-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+    .vis-dot.red    { background:var(--red-t); }
+    .vis-dot.green  { background:var(--green-t); }
+    .vis-dot.yellow { background:var(--yellow-t); }
+    .vis-note {
+      background:rgba(200,96,26,.07); border:1px solid rgba(200,96,26,.25);
+      border-radius:3px; padding:16px 20px;
+      font-size:12px; color:var(--text-2); line-height:1.6; margin-top:24px;
+    }
+    .vis-note strong { color:var(--accent-l); }
+
+    /* NEXT STEPS */
+    .next-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .next-card {
+      background:var(--bg-card); border:1px solid var(--border);
+      border-left:3px solid var(--accent);
+      border-radius:0 3px 3px 0; padding:24px 20px;
+    }
+    .next-num {
+      font-family:'Cormorant Garamond', serif;
+      font-size:36px; font-weight:300; color:var(--accent); opacity:.55; margin-bottom:8px; line-height:1;
+    }
+    .next-title { font-size:13px; color:var(--text); font-weight:600; margin-bottom:6px; }
+    .next-desc  { font-size:12px; color:var(--text-muted); line-height:1.55; }
+
+    /* FOOTER */
+    .rpt-footer {
+      border-top:1px solid var(--border); padding:24px 48px;
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:11px; color:var(--text-muted);
+      background:var(--bg-card);
+    }
+    .footer-brand { font-family:'Cormorant Garamond', serif; font-size:16px; color:var(--text-2); }
+
+    /* EXPANDABLE */
+    .expand-block { margin-top:16px; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
+    .expand-block summary {
+      list-style:none; cursor:pointer; padding:12px 20px;
+      background:rgba(200,96,26,.06); border-bottom:1px solid transparent;
+      font-size:11px; color:var(--text-muted);
+      display:flex; justify-content:space-between; align-items:center;
+      user-select:none; transition:color .2s;
+    }
+    .expand-block summary::-webkit-details-marker { display:none; }
+    .expand-block summary:hover { color:var(--text-2); }
+    .expand-block[open] summary { border-bottom-color:var(--border); color:var(--accent-l); }
+    .expand-block summary .exp-arrow { transition:transform .2s; display:inline-block; }
+    .expand-block[open] summary .exp-arrow { transform:rotate(90deg); }
+    .expand-body { padding:20px; font-size:12px; color:var(--text-2); line-height:1.65; }
+    .expand-body h4 { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--text-muted); margin:16px 0 8px; }
+    .expand-body h4:first-child { margin-top:0; }
+    .expand-body table { width:100%; border-collapse:collapse; margin-top:8px; font-size:11px; }
+    .expand-body th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-muted); padding:6px 10px; border-bottom:1px solid var(--border); }
+    .expand-body td { padding:8px 10px; border-bottom:1px solid rgba(58,30,10,.4); color:var(--text-2); vertical-align:top; }
+    .expand-body tr:last-child td { border-bottom:none; }
+    .exp-note { background:rgba(200,96,26,.06); border:1px solid rgba(200,96,26,.2); border-radius:3px; padding:12px 16px; font-size:11px; color:var(--text-2); margin-top:16px; }
+
+    @media (max-width:900px) {
+      .stats-grid    { grid-template-columns:1fr 1fr; }
+      .blocks-grid   { grid-template-columns:1fr; }
+      .achv-grid     { grid-template-columns:1fr 1fr; }
+      .presence-grid { grid-template-columns:1fr; }
+      .next-grid     { grid-template-columns:1fr; }
+      .seo-journey   { grid-template-columns:1fr 40px 1fr 40px 1fr; }
+      .vis-row       { grid-template-columns:1fr; }
+      .rpt-body      { padding:36px 24px; }
+      .rpt-header    { padding:36px 24px 28px; }
+      .rpt-title     { font-size:40px; }
+    }
+    @media (max-width:600px) {
+      .stats-grid  { grid-template-columns:1fr; }
+      .seo-journey { grid-template-columns:1fr; }
+      .seo-arrow   { display:none; }
+      .achv-grid   { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="rpt-header">
+  <div class="header-row">
+    <div>
+      <div class="brand-name">Espora Madre</div>
+      <div class="brand-sub">Micología Artesanal · Valle de Punilla, Córdoba</div>
+    </div>
+    <div class="cycle-pill">Ciclo #2</div>
+  </div>
+  <div class="rpt-title">
+    Informe de<br><em>Resultados</em>
+  </div>
+  <div class="rpt-meta">
+    <span><span class="mdot"></span>Período: 20 mayo → 10 junio 2026</span>
+    <span><span class="mdot"></span>Generado: 28 mayo 2026</span>
+    <span><span class="mdot"></span>Fase: Foundation</span>
+  </div>
+</header>
+
+<div class="rpt-body">
+
+  <!-- RESUMEN -->
+  <section>
+    <div class="s-label">Resumen del ciclo</div>
+    <div class="s-title">Lo que se construyó</div>
+    <div class="s-desc">En 8 días de trabajo (20–28 mayo) el sitio pasó de sin precios, sin SEO y sin presencia digital a una base funcional lista para crecer.</div>
+    <div class="divider"></div>
+
+    <div class="stats-grid">
+      <div class="stat-card c-orange">
+        <div class="stat-val">+22</div>
+        <div class="stat-lbl">Puntos SEO ganados</div>
+        <div class="stat-delta up">↑ De 18 a 40 /100</div>
+      </div>
+      <div class="stat-card c-green">
+        <div class="stat-val">122</div>
+        <div class="stat-lbl">Visitas al sitio — ayer</div>
+        <div class="stat-delta up">6 páginas indexadas en Google</div>
+      </div>
+      <div class="stat-card c-orange">
+        <div class="stat-val">28</div>
+        <div class="stat-lbl">Entregables completados</div>
+        <div class="stat-delta up">✓ Web · Email · SEO · Contenido</div>
+      </div>
+      <div class="stat-card c-green">
+        <div class="stat-val">2.4<sup>k</sup></div>
+        <div class="stat-lbl">Seguidores Instagram</div>
+        <div class="stat-delta neu">Base orgánica activa</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENTREGABLES -->
+  <section>
+    <div class="s-label">Entregables</div>
+    <div class="s-title">Qué se completó</div>
+    <div class="s-desc">Cada bloque representa un área de trabajo con sus tareas correspondientes.</div>
+    <div class="divider"></div>
+
+    <div class="blocks-grid">
+
+      <div class="block-card">
+        <div class="block-hd">
+          <div class="block-hd-title">Bloque A — Sitio Web</div>
+          <div class="badge badge-done">Completado</div>
+        </div>
+        <div class="block-list">
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Precios visibles en 4 productos del home</div>
+              <div class="bl-note">Hongos frescos, kit, canasta básica y completa</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Links de WhatsApp pre-cargados por producto</div>
+              <div class="bl-note">Mensaje pre-escrito por producto — un toque y llega la consulta</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Taller online: form "anotate" activo</div>
+              <div class="bl-note">Waitlist para próxima edición online a $60.000 ARS</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Kit Autocultivo: página propia con precio + WhatsApp</div>
+              <div class="bl-note">$25.000 ARS visible, acceso directo por WhatsApp</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Sección envíos y métodos de pago</div>
+              <div class="bl-note">Transferencia, Mercado Pago y envío a todo el país</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Google Business Profile creado y verificado</div>
+              <div class="bl-note">San Antonio de Arredondo, Valle de Punilla, Córdoba</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block-card">
+        <div class="block-hd">
+          <div class="block-hd-title">Bloque B — Email Marketing</div>
+          <div class="badge badge-done">Completado</div>
+        </div>
+        <div class="block-list">
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Mailerlite configurado + formulario en sitio</div>
+              <div class="bl-note">Integración activa con automatización de entrega del PDF</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">PDF lead magnet: "Guía de Cultivo Espora Madre"</div>
+              <div class="bl-note">Entrega automática al suscribirse — sin acción manual</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Secuencia de 5 emails nurture lista</div>
+              <div class="bl-note">Emails 1–5 en Mailerlite · activan automáticamente al suscribirse</div>
+            </div>
+          </div>
+          <div style="padding:0 12px 16px;">
+            <details class="expand-block">
+              <summary>¿Cómo funciona el sistema de emails y qué hacer para cada taller? <span class="exp-arrow">▸</span></summary>
+              <div class="expand-body">
+                <h4>Cómo está diseñado el sistema</h4>
+                <p>La automatización de Mailerlite está pensada para funcionar sola, sin necesitar actualización entre talleres. Cuando alguien descarga la guía de cultivo, entra automáticamente a una secuencia de emails que educa sobre el proceso, cuenta la historia del laboratorio y genera confianza con la marca. Todos los emails llevan al WhatsApp — sin mencionar fechas específicas de taller.</p>
+                <h4>¿Y los talleres cómo se anuncian?</h4>
+                <p>Los talleres se anuncian por separado, como campañas manuales (broadcasts) en Mailerlite, sobre la lista completa:</p>
+                <table>
+                  <tr><th>Cuándo</th><th>Qué mandar</th></tr>
+                  <tr><td>7 días antes</td><td>"Abrimos inscripción — taller [FECHA], X cupos"</td></tr>
+                  <tr><td>3 días antes</td><td>"Quedan pocos lugares"</td></tr>
+                  <tr><td>1 día antes</td><td>"Último aviso — mañana cerramos"</td></tr>
+                  <tr><td>Si se llena</td><td>"Se llenó. Anotate en lista de espera"</td></tr>
+                </table>
+                <h4>En el futuro — Funnel de registro</h4>
+                <p>Cuando los anuncios de Meta Ads estén activos, crearemos una landing page específica para el taller. Las personas que lleguen desde esa landing entran a una segunda automatización con la fecha hardcoded — confirmación, recordatorios y seguimiento. Eso se construye en el próximo ciclo.</p>
+                <div class="exp-note">La automatización actual corre sola, sin mantenimiento entre talleres. Los talleres se anuncian como campañas separadas — la lista crece semana a semana con cada visita al sitio.</div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div class="block-card">
+        <div class="block-hd">
+          <div class="block-hd-title">Bloque C — SEO y Contenido</div>
+          <div class="badge badge-partial">En curso</div>
+        </div>
+        <div class="block-list">
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Blog post 1 publicado</div>
+              <div class="bl-note">"Cómo cultivar gírgolas en casa" — live, indexado, schema activo</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-wait">⏳</div>
+            <div class="bl-txt">
+              <div class="bl-main">Blog post 2 — "Qué es el umami"</div>
+              <div class="bl-note">Publicación planificada la próxima semana</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">SEO técnico on-page optimizado</div>
+              <div class="bl-note">H1, meta descriptions, title tags, alt texts, NAP, schemas activos</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">6 correcciones visuales del sitio</div>
+              <div class="bl-note">CSS, captions, footer, nav, formulario de email</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Pixel Meta instalado y verificado</div>
+              <div class="bl-note">Activo en todas las páginas · listo para retargeting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block-card">
+        <div class="block-hd">
+          <div class="block-hd-title">Bloque S — Optimizaciones SEO</div>
+          <div class="badge badge-done">Verificado ✓</div>
+        </div>
+        <div class="block-list">
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">SEO plugin activo (Jetpack SEO)</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Title tag homepage optimizado</div>
+              <div class="bl-note">"Taller de Cultivo de Hongos en Córdoba | Gírgolas Gourmet"</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Meta descriptions activas en todas las páginas</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">H1, H2 y estructura semántica corregida</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Footer con NAP completo</div>
+              <div class="bl-note">Nombre + dirección + teléfono visible en todas las páginas</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">Alt texts en 18+ imágenes del sitio</div>
+            </div>
+          </div>
+          <div class="bl-item">
+            <div class="bl-icon i-ok">✓</div>
+            <div class="bl-txt">
+              <div class="bl-main">FAQ section con 8 preguntas en la página del taller</div>
+              <div class="bl-note">Schema FAQPage activo · habilita rich results en Google</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SEO SCORE -->
+  <section>
+    <div class="s-label">Posicionamiento web</div>
+    <div class="s-title">Evolución SEO</div>
+    <div class="s-desc">El score mide salud técnica, estructura, schema markup, mobile y sitemap. Un sitio indexado y bien estructurado es la base para rankear.</div>
+    <div class="divider"></div>
+
+    <div class="seo-journey">
+      <div class="score-box before">
+        <div class="sc-lbl">Inicio — 22 mayo</div>
+        <div class="sc-num">18<span class="sc-denom">/100</span></div>
+        <div class="sc-date">0 páginas en Google · sin schema · sin GBP</div>
+      </div>
+      <div class="seo-arrow">
+        <div class="arr-icon">→</div>
+        <div class="arr-val">+22 pts</div>
+      </div>
+      <div class="score-box mid">
+        <div class="sc-lbl">Auditoría — 26 mayo</div>
+        <div class="sc-num">40<span class="sc-denom">/100</span></div>
+        <div class="sc-date">7 páginas indexadas · GBP activo · blog live</div>
+      </div>
+      <div class="seo-arrow">
+        <div class="arr-icon">→</div>
+        <div class="arr-val">+30 pts</div>
+      </div>
+      <div class="score-box est">
+        <div class="sc-lbl">Post-optimizaciones — estimado</div>
+        <div class="sc-num">~70<span class="sc-denom">/100</span></div>
+        <div class="sc-date">Schemas, title tags y S1-S8 aplicados</div>
+      </div>
+    </div>
+
+    <div class="achv-grid">
+      <div class="achv-card">
+        <div class="achv-ico">📍</div>
+        <div class="achv-title">Google Business Profile</div>
+        <div class="achv-desc">Perfil creado, verificado y con NAP completo. Activa la presencia en Google Maps y el 3-pack local para búsquedas en Córdoba.</div>
+        <span class="achv-tag">Activo</span>
+      </div>
+      <div class="achv-card">
+        <div class="achv-ico">🗂️</div>
+        <div class="achv-title">Schemas de datos estructurados</div>
+        <div class="achv-desc">3 tipos activos: LocalBusiness (home), BlogPosting (post 1) y FAQPage (taller). Habilita rich results en Google y señales para IA.</div>
+        <span class="achv-tag">Activo</span>
+      </div>
+      <div class="achv-card">
+        <div class="achv-ico">📄</div>
+        <div class="achv-title">Sitemap con 6 páginas</div>
+        <div class="achv-desc">Home, taller, nosotros, productos, blog y primer post. Se actualiza automáticamente al publicar nuevo contenido.</div>
+        <span class="achv-tag">Activo</span>
+      </div>
+      <div class="achv-card">
+        <div class="achv-ico">🔍</div>
+        <div class="achv-title">Google Search Console</div>
+        <div class="achv-desc">Sitemap enviado. Google recibe notificación de cada nuevo post. Monitorea clicks, impresiones y posición media.</div>
+        <span class="achv-tag">Activo</span>
+      </div>
+      <div class="achv-card">
+        <div class="achv-ico">🖼️</div>
+        <div class="achv-title">Alt texts en imágenes</div>
+        <div class="achv-desc">18+ imágenes revisadas con descripciones que incluyen "Córdoba" y "Valle de Punilla". Mejora accesibilidad y señales SEO local.</div>
+        <span class="achv-tag">Activo</span>
+      </div>
+      <div class="achv-card">
+        <div class="achv-ico">🔗</div>
+        <div class="achv-title">URLs — en evaluación</div>
+        <div class="achv-desc">Las URLs actuales tienen formato de fecha. Evaluar migración de plan para activar URLs limpias tipo /slug/, que rankean mejor.</div>
+        <span class="achv-tag warn">En evaluación</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESENCIA DIGITAL -->
+  <section>
+    <div class="s-label">Canales activos</div>
+    <div class="s-title">Presencia digital</div>
+    <div class="s-desc">Estado actual de cada canal al cierre del ciclo.</div>
+    <div class="divider"></div>
+
+    <div class="presence-grid">
+      <div class="pres-card">
+        <div class="pres-status ok">Activo</div>
+        <div class="pres-platform">Instagram</div>
+        <div class="pres-val">2.478</div>
+        <div class="pres-ctx">seguidores · @esporamadre</div>
+        <div class="pres-pend">Base orgánica sólida para crecer con contenido consistente</div>
+      </div>
+      <div class="pres-card">
+        <div class="pres-status ok">Activo</div>
+        <div class="pres-platform">Google Business Profile</div>
+        <div class="pres-val">✓</div>
+        <div class="pres-ctx">Verificado · San Antonio de Arredondo, Córdoba</div>
+        <div class="pres-pend">Estadísticas de vistas, llamadas y clics disponibles en el panel de GBP</div>
+      </div>
+      <div class="pres-card">
+        <div class="pres-status ok">Activo</div>
+        <div class="pres-platform">Sitio Web — esporamadre.com</div>
+        <div class="pres-val">122</div>
+        <div class="pres-ctx">visitas ayer · 6 páginas indexadas</div>
+        <div class="pres-pend">Historial completo disponible en el panel de WordPress → Estadísticas</div>
+      </div>
+      <div class="pres-card">
+        <div class="pres-status ok">Activo</div>
+        <div class="pres-platform">Email Marketing — Mailerlite</div>
+        <div class="pres-val">0</div>
+        <div class="pres-ctx">suscriptores · base en construcción</div>
+        <div class="pres-pend">Formulario activo, PDF se entrega automáticamente. La lista crece con cada visita.</div>
+      </div>
+      <div class="pres-card">
+        <div class="pres-status ok">Activo</div>
+        <div class="pres-platform">Meta / Publicidad</div>
+        <div class="pres-val">✓</div>
+        <div class="pres-ctx">Pixel instalado y verificado</div>
+        <div class="pres-pend">El Pixel ya está activo — el retargeting puede arrancar de inmediato.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIBILIDAD GOOGLE -->
+  <section>
+    <div class="s-label">Búsquedas orgánicas</div>
+    <div class="s-title">Visibilidad en Google</div>
+    <div class="s-desc">Diagnóstico de presencia orgánica al 28 mayo. El SEO técnico está resuelto — la visibilidad crece con tiempo y contenido.</div>
+    <div class="divider"></div>
+
+    <div class="visibility-box">
+      <div class="vis-row">
+        <div>
+          <div class="vis-block-title">Lo que Google indexa hoy</div>
+          <div class="vis-item"><div class="vis-dot green"></div><div>esporamadre.com — homepage visible ✓</div></div>
+          <div class="vis-item"><div class="vis-dot green"></div><div>/taller-de-cultivo/ — indexada · taller 14 junio live ✓</div></div>
+          <div class="vis-item"><div class="vis-dot green"></div><div>/productos/ — indexada ✓</div></div>
+          <div class="vis-item"><div class="vis-dot green"></div><div>/sobre-nosotros/ — indexada ✓</div></div>
+          <div class="vis-item"><div class="vis-dot green"></div><div>/blog/ + post 1 — indexados ✓</div></div>
+          <div class="vis-item"><div class="vis-dot yellow"></div><div>Post 2 "Umami" — publicación próxima semana</div></div>
+        </div>
+        <div>
+          <div class="vis-block-title">Competidores actualmente en SERP</div>
+          <div class="vis-item"><div class="vis-dot red"></div><div>Kinoko — productor de gírgolas, Córdoba capital</div></div>
+          <div class="vis-item"><div class="vis-dot red"></div><div>UNC FCA — curso universitario · $50.000 ARS</div></div>
+          <div class="vis-item"><div class="vis-dot red"></div><div>ESPORAKI — productor, Buenos Aires</div></div>
+          <div class="vis-item"><div class="vis-dot red"></div><div>Fundación Biosfera — taller de autocultivo</div></div>
+          <div class="vis-item"><div class="vis-dot yellow"></div><div>Espora Madre — posición orgánica en construcción</div></div>
+          <div class="vis-item"><div class="vis-dot green"></div><div>GBP activo — ventaja local sobre competidores sin ficha</div></div>
+        </div>
+      </div>
+      <div class="vis-note">
+        <strong>Contexto:</strong> La presencia orgánica se construye con tiempo. El SEO técnico resuelto (schemas, title tags, alt texts, GBP) planta las señales que Google necesita para rankear. Con 1 post por semana durante 2–3 meses, Espora Madre entra al 3-pack local y aparece para búsquedas de nicho. El GBP es la oportunidad más rápida: con 5–10 reseñas de alumnos, el perfil puede aparecer en el mapa de Córdoba antes de rankear en búsqueda orgánica.
+      </div>
+    </div>
+  </section>
+
+  <!-- PRÓXIMOS PASOS -->
+  <section>
+    <div class="s-label">Ciclo #3 — Bloque F</div>
+    <div class="s-title">Próximos pasos</div>
+    <div class="s-desc">El Ciclo #2 construyó la base. El Ciclo #3 convierte el sitio en una máquina de captura y cierre de ventas.</div>
+    <div class="divider"></div>
+
+    <div class="next-grid">
+      <div class="next-card">
+        <div class="next-num">01</div>
+        <div class="next-title">Blog y captura de emails</div>
+        <div class="next-desc">Diseñar cards del blog con imagen y excerpt. Integrar formulario de suscripción. Publicar blog post 2 y 3.</div>
+      </div>
+      <div class="next-card">
+        <div class="next-num">02</div>
+        <div class="next-title">Páginas de producto individual</div>
+        <div class="next-desc">Páginas propias para gírgolas frescas, polvo umami, escabeche y sal de hongos — activan búsquedas de nicho y ventas directas.</div>
+      </div>
+      <div class="next-card">
+        <div class="next-num">03</div>
+        <div class="next-title">Publicidad Meta Ads</div>
+        <div class="next-desc">El Pixel está activo. En cuanto se confirme acceso al Business Manager, el retargeting arranca de inmediato.</div>
+      </div>
+      <div class="next-card">
+        <div class="next-num">04</div>
+        <div class="next-title">Campaña taller online</div>
+        <div class="next-desc">5 personas esperan fecha. Al confirmar la fecha, activamos campaña WhatsApp + email a $60.000 ARS por persona.</div>
+      </div>
+      <div class="next-card">
+        <div class="next-num">05</div>
+        <div class="next-title">Seguimiento de leads</div>
+        <div class="next-desc">20–50 consultas por mes sin sistema de seguimiento. Implementar un CRM liviano para cerrar más ventas.</div>
+      </div>
+      <div class="next-card">
+        <div class="next-num">06</div>
+        <div class="next-title">Reseñas Google</div>
+        <div class="next-desc">Pedir 5–10 reseñas a alumnos anteriores potencia el GBP para aparecer en Google Maps antes que los competidores.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TALLER CONFIRMADO -->
+  <section>
+    <div style="background:rgba(200,96,26,.08); border:1px solid rgba(200,96,26,.3); border-radius:3px; padding:28px 32px; display:flex; align-items:center; gap:24px;">
+      <div style="font-size:40px; flex-shrink:0;">📅</div>
+      <div>
+        <div style="font-size:10px; text-transform:uppercase; letter-spacing:.15em; color:var(--accent); font-weight:700; margin-bottom:6px;">Taller presencial confirmado</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:400; margin-bottom:4px;">14 de junio de 2026</div>
+        <div style="font-size:12px; color:var(--text-2);">Valle de Punilla, Córdoba · $50.000 ARS por persona · Cupos limitados · esporamadre.com/taller-de-cultivo/</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /rpt-body -->
+
+<footer class="rpt-footer">
+  <div class="footer-brand">Espora Madre · Ciclo #2 · 2026</div>
+  <div>Informe preparado para Espora Madre</div>
+  <div>Hard close: 10 junio 2026</div>
+</footer>
+
+</body>
+</html>
